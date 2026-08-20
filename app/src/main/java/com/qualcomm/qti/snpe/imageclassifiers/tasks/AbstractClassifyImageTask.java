@@ -129,8 +129,15 @@ public abstract class AbstractClassifyImageTask extends AsyncTask<Bitmap, Void, 
                    pixelsBatched[batchIdx + 1] = grayscale - mMeanImage.get();
                    grayscale = (pixel & 0xFF);
                    pixelsBatched[batchIdx + 2] = grayscale - mMeanImage.get();
-                }
-                else {
+                } else if (modelName.equals("mobilenetv2")) {
+                   float r = ((pixel >> 16) & 0xFF) / 255.0f;
+                   float g = ((pixel >>  8) & 0xFF) / 255.0f;
+                   float b = (pixel & 0xFF) / 255.0f;
+                   int hw = image.getHeight() * image.getWidth();
+                   pixelsBatched[idx] = (r - 0.485f) / 0.229f;
+                   pixelsBatched[hw + idx] = (g - 0.456f) / 0.224f;
+                   pixelsBatched[2 * hw + idx] = (b - 0.406f) / 0.225f;
+                } else {
                    float grayscale = ((pixel >> 16) & 0xFF);
                    pixelsBatched[batchIdx] = grayscale;
                    grayscale = ((pixel >>  8) & 0xFF);
